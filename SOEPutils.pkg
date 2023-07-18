@@ -6,17 +6,11 @@ d Distribution-Date: 20230718
 d
 d Version 0.1
 f stata/compare_gen.ado
-*f stata/compare_gen.sthlp
 *
 f stata/assert_year_range.ado
-*f stata/assert_year_range.sthlp
 f stata/rename_relabel.ado
-*f stata/rename_relabel.sthlp
 f stata/valid_years.ado
-*f stata/valid_years.sthlp
 f stata/is_there_a_new_version.ado
-*f stata/is_there_a_new_version.sthlp
 f stata/soep_checks.ado
-*f stata/soep_checks.sthlp
 f stata/recode_missings.ado
-*f stata/recode_missings.sthlp
+f stata/soep_harmonize.ado
