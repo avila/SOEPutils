@@ -8,7 +8,6 @@ d Version 0.1
 
 f stata/assert_year_range.ado
 f stata/compare_gen.ado
-f stata/helper.ado
 f stata/is_there_a_new_version.ado
 f stata/recode_missings.ado
 f stata/rename_relabel.ado
