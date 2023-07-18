@@ -10,3 +10,5 @@ f stata/compare_gen.ado
 *
 f stata/assert_year_range.ado
 *f stata/assert_year_range.sthlp
+f stata/rename_relabel.ado
+*f stata/rename_relabel.sthlp
