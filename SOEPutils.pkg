@@ -14,3 +14,4 @@ f stata/is_there_a_new_version.ado
 f stata/soep_checks.ado
 f stata/recode_missings.ado
 f stata/soep_harmonize.ado
+f stata/soep_check_harmonization.ado
