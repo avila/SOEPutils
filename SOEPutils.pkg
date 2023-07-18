@@ -18,3 +18,5 @@ f stata/is_there_a_new_version.ado
 *f stata/is_there_a_new_version.sthlp
 f stata/soep_checks.ado
 *f stata/soep_checks.sthlp
+f stata/recode_missings.ado
+*f stata/recode_missings.sthlp
