@@ -1,0 +1,12 @@
+********************************************** SOEPutils.pkg
+v 3
+d SOEPutils
+d Helper Stata programs for SOEP data wrangling
+d Distribution-Date: 20230718
+d
+d Version 0.1
+f stata/compare_gen.ado
+*f stata/compare_gen.sthlp
+*
+f stata/assert_year_range.ado
+*f stata/assert_year_range.sthlp
