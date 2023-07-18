@@ -14,3 +14,5 @@ f stata/rename_relabel.ado
 *f stata/rename_relabel.sthlp
 f stata/valid_years.ado
 *f stata/valid_years.sthlp
+f stata/is_there_a_new_version.ado
+*f stata/is_there_a_new_version.sthlp
