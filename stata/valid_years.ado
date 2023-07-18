@@ -86,3 +86,14 @@ program valid_years, rclass
 end
 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+capture program drop reload
+program define reload
+    /*reload current variables from current dataset */
+    qui ds
+    di as text "reloading  `r(varlist)'" _n " from `c(filename)'"
+    use `r(varlist)' using `c(filename)', clear
+    desc, short
+end
