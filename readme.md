@@ -1,7 +1,8 @@
 
-SOEPutils
-=========
-Helper Stata programs for SOEP data wrangling 
+SOEPutils: Helper Stata programs for SOEP data wrangling 
+========================================================
+
+
 
 - programs:
 	- compare_gen
