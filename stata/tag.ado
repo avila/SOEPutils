@@ -86,12 +86,12 @@ program define tag
 end
 
 
-if 0==1 {
+if "0"=="1" {
     tag pid syear psample plb0022_h   if stib == 10 & l.stib == 13, summ 
 }
 
 
-if 0==1 {
+if "0"=="1" {
     /* tests */
     levelsof psample if __i==1, local(levels) 
     qui fre psample if __i==1
