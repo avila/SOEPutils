@@ -33,6 +33,7 @@ net install SOEPutils, from("https://git.soep.de/mavila/soeputils/-/raw/main") r
 - soep_check_harmonization.ado
 - soep_checks.ado
 - soep_harmonize.ado
+- tag.ado
 - valid_years.ado
 
 Author:  Marcelo Avila (Student Assistent at DIW Berlin)
