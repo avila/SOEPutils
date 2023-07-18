@@ -25,6 +25,7 @@ To suppress output just run it with quietly.
 capture program drop assert_year_range
 program define assert_year_range
 	version 15
+    
     syntax varlist(max=1), MINsyear(integer) MAXsyear(integer) [levels(numlist) POSitiveonly]
     local var    `varlist'
     /* NOTE: improve c_min and c_max. It is working well like this though */

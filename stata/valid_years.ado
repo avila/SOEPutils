@@ -14,7 +14,8 @@ usage:
 */
 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 cap program drop valid_years
-program valid_years, rclass
+program define valid_years, rclass
+    version 17
 
     syntax [varlist], [VARyear(varname)] [CURrentyear]
 

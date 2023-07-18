@@ -29,6 +29,7 @@
 
 capture program drop soep_check_harmonization
 program define soep_check_harmonization
+    version 17
     
     syntax varlist(min=2),  [verbose] [debug]
     

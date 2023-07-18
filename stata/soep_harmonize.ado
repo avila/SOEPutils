@@ -4,6 +4,7 @@
 
 capture program drop soep_harmonize 
 program define soep_harmonize 
+    version 17
 
     syntax varlist, GENerate(name) MISsings(str) [NOASSERT_multiple_valid] [replace]
 

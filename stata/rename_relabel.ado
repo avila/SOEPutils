@@ -20,7 +20,9 @@ erwstatus_h: Erwerbsstatus [harmonisiert] | plb0022_h
 */
 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 cap program drop rename_relabel
-program rename_relabel
+program define rename_relabel
+	version 17
+	
 	args var newvar
 	local lab : variable label `var'
 	local newlab "`var':`lab'"

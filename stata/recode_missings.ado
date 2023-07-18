@@ -6,6 +6,8 @@
 
 capture program drop recode_missings
 program define recode_missings
+    version 17
+    
     syntax varlist, to(str) [override]
 
     if !inlist("`to'", "stata", "soep") {

@@ -14,6 +14,8 @@ generation scripts will need to be adjusted to account for the new variable.
 
 capture program drop is_there_a_new_version
 program define is_there_a_new_version
+    version 17
+    
     di as text "Checking loaded variables against `c(filename)'"
 
 	qui cap desc *_h *_v* using `c(filename)', varlist

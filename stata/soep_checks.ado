@@ -1,5 +1,7 @@
 capture program drop soep_checks
 program define soep_checks
+    version 17
+    
     syntax, [NOVersions] [NOLevels] [VARyear(varname)]
     desc, short
 

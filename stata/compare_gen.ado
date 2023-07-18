@@ -14,7 +14,8 @@ warning:
 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 capture program drop compare_gen
 program define compare_gen
-	version 15
+	version 17
+	
 	syntax varlist(min=2 max=2) [if], [PREfix(string) IDvar(varname)]
 	tokenize `varlist'
 	args var_1 var_2
