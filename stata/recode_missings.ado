@@ -25,3 +25,18 @@ program define recode_missings
     `cmd' `varlist', mv(`miss_values') `override'
 
 end
+
+*** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**# subroutines
+*** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+/* Error nr txt
+   displays error message txt and exit with nr
+*/
+cap program drop Error
+program define Error
+    args nr txt
+
+    dis as err `"{p}Error: `txt'{p_end}"'
+    exit `nr'
+end
