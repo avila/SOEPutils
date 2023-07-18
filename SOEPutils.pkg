@@ -15,4 +15,6 @@ f stata/soep_check_harmonization.ado
 f stata/soep_check_harmonization.ado
 f stata/soep_checks.ado
 f stata/soep_harmonize.ado
+f stata/tag.ado
 f stata/valid_years.ado
+
