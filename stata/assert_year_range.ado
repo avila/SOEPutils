@@ -83,6 +83,9 @@ end
 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+*** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+**# local subroutines
+*** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 capture program drop comma_numlist
 program comma_numlist, rclass
@@ -92,4 +95,22 @@ program comma_numlist, rclass
     local result "`r(numlist)'"
     local result : subinstr local result " " ",", all
     return local comma_list "`result'"
+end
+
+
+capture program drop extract_valid_vals
+program extract_valid_vals, rclass
+    /* used in assert_year_range */
+    version 15
+    syntax, LEVELStocheck(string)
+    local valid_values
+    foreach val of local levelstocheck {
+        // di "`val'"
+        if `val' > 0 {
+            local valid_values `valid_values' `val'
+        }
+
+    }
+    // di "done"
+    return local valids `valid_values'
 end
