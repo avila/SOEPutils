@@ -3,11 +3,23 @@
 *** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 capture program drop tag
 program define tag
+    version 17
 
-    syntax [varname] if, 
+    syntax varlist(min=1) if, ///
+        [nolist] /// does not list variables, only tags id variable
+        [format(str)] /// format of non-string variables
+        [strformat(str)] /// format of string variables
+        [Header(integer 40)] /// header option of list (number of rows for repeating variable name)
+        [listopts(string asis)] /// further options to be passed to list
+        [SUMMarize] // write a summary of tagged 'co-variables'
 
-    if "`varname'"=="" local varname pid
-    local id_var `varname'
+
+    gettoken id_var covars : varlist
+
+
+    *** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    **# tags
+    *** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     cap drop __i 
     qui gen __i = 1 `if'
@@ -26,4 +38,82 @@ program define tag
 
     di as text _newline "variables created or overwritten: '_ck_all', '__i' and '__m'"
 
+    *** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    **# lists
+    *** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    if "`nolist'"=="" {
+        /* shorten format to be able to display more variables */
+        if `"`format'"'=="" local format "%12.0g"
+        if `"`strformat'"'=="" local strformat "%12s"
+        ds `varlist' , not(type string)
+        if "`r(varlist)'" != "" format `r(varlist)' `format'
+        ds `varlist' , has(type string)
+        if "`r(varlist)'" != "" format `r(varlist)' `strformat'
+
+        list `idvar' `varlist' __m if _ck_all==1, linesize(255) header(`header') noobs sepby(`idvar') `listopts'
+
+    }
+
+    *** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    **# summarizes
+    *** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    if "`summarize'"!="" {
+        qui levelsof `id_var' if __i==1
+        di _newline  "`id_var':" _colum(20) "`r(N)' tagged obs. `r(r)' uniquely" 
+
+        foreach var in `covars' {
+            qui levelsof `var' if __i==1, local(levels) 
+            qui fre `var' if __i==1
+            mata : st_numscalar("colsum", colsum(st_matrix("r(valid)")))
+
+            di as text _newline 120 * "~"
+            di as text "var: `var':" as res "%" as text " [total: `=colsum']"
+            
+            local r = 1 
+            foreach lev in `levels' {
+
+                di as text "`lev':" as res %-5.1f (r(valid)[`r',1]/colsum)*100 as text " " _continue 
+                if mod(`r', 20) == 0 di as res _newline _continue
+
+                local r = `r' + 1  
+            }
+            
+        }
+    }
+
 end
+
+
+if 0 {
+    tag pid syear psample plb0022_h   if stib == 10 & l.stib == 13, summ 
+}
+
+
+if 0 {
+    /* tests */
+    levelsof psample if __i==1, local(levels) 
+    qui fre psample if __i==1
+    local r = 1 
+    mata : st_numscalar("colsum", colsum(st_matrix("r(valid)")))
+    sca li colsum
+    foreach lev in `levels' {
+        di "`lev':" %-5.2f r(valid)[`r',1]/colsum*100 "|  " _continue 
+        local r = `r' + 1  
+        if mod(`r', 15) == 1 di _newline _continue
+    }
+
+
+    levelsof plb0022_h if __i==1, local(levels) 
+    qui fre plb0022_h if __i==1
+    local r = 1 
+    mata : st_numscalar("colsum", colsum(st_matrix("r(valid)")))
+    sca li colsum
+    foreach lev in `levels' {
+        di "`lev':" %-5.2f (r(valid)[`r',1]/colsum)*100 "|  " _continue 
+        local r = `r' + 1  
+        if mod(`r', 15) == 1 di _newline _continue
+    }
+
+}
