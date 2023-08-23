@@ -70,7 +70,7 @@ program define tag
             if _rc == 3204 scalar colsum = 0 
 
             di as text _newline 120 * "~"
-            di as text "var: `var':" as res "%" as text " [total: `=colsum']"
+            di as text "var: `var':" as res "%" as text " [total: " as res "`=colsum'" as text "]"
             if `n_cat' < 50 {
 
                 local r = 1 
@@ -89,8 +89,5 @@ program define tag
             
         }
     }
-
-    di "idvar `idvar'"
-    di "idvar `idvar'"
 
 end
