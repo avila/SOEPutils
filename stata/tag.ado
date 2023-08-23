@@ -5,8 +5,7 @@ capture program drop tag
 program define tag
     version 17
 
-    syntax varlist(min=1) if, ///
-        [nolist] /// does not list variables, only tags id variable
+    syntax varlist(min=1) if, [NOlist] /// does not list variables, only tags id variable
         [format(str)] /// format of non-string variables
         [strformat(str)] /// format of string variables
         [Header(integer 40)] /// header option of list (number of rows for repeating variable name)
@@ -51,38 +50,47 @@ program define tag
         ds `varlist' , has(type string)
         if "`r(varlist)'" != "" format `r(varlist)' `strformat'
 
-        list `idvar' `varlist' __m if _ck_all==1, linesize(255) header(`header') noobs sepby(`idvar') `listopts'
+        list `id_var' `varlist' __m if _ck_all==1, linesize(255) header(`header') noobs sepby(`id_var') `listopts'
 
     }
-
+    
     *** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     **# summarizes
     *** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
     if "`summarize'"!="" {
         qui levelsof `id_var' if __i==1
-        di _newline  "`id_var':" _colum(20) "`r(N)' tagged obs. `r(r)' uniquely" 
+        di _newline as text "`id_var':" _colum(20) as res "`r(N)' " as text "tagged obs. " as res "`r(r)' " as text "uniquely" 
 
         foreach var in `covars' {
             qui levelsof `var' if __i==1, local(levels) 
+            local n_cat = r(r)
             qui fre `var' if __i==1
-            mata : st_numscalar("colsum", colsum(st_matrix("r(valid)")))
+            cap mata : st_numscalar("colsum", colsum(st_matrix("r(valid)")))
+            if _rc == 3204 scalar colsum = 0 
 
             di as text _newline 120 * "~"
             di as text "var: `var':" as res "%" as text " [total: `=colsum']"
-            
-            local r = 1 
-            foreach lev in `levels' {
+            if `n_cat' < 50 {
 
-                di as text "`lev':" as res %-5.1f (r(valid)[`r',1]/colsum)*100 as text " " _continue 
-                if mod(`r', 20) == 0 di as res _newline _continue
+                local r = 1 
+                foreach lev in `levels' {
 
-                local r = `r' + 1  
+                    di as text "`lev':" as res %-5.1f (r(valid)[`r',1]/colsum)*100 as text " " _continue 
+                    if mod(`r', 20) == 0 di as res _newline _continue
+
+                    local r = `r' + 1  
+                }
             }
+            else {
+                di as text as res "`n_cat' " as text "categories, skipping detailed percentages..." _continue
+            }
+            
             
         }
     }
 
+    di "idvar `idvar'"
+    di "idvar `idvar'"
+
 end
-
-
