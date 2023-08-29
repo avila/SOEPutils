@@ -11,6 +11,8 @@ f stata/compare_gen.ado
 f stata/is_there_a_new_version.ado
 f stata/recode_missings.ado
 f stata/rename_relabel.ado
+f stata/sgen.ado
+f stata/srep.ado
 f stata/soep_check_harmonization.ado
 f stata/soep_check_harmonization.ado
 f stata/soep_checks.ado
