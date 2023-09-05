@@ -1,4 +1,4 @@
-SOEPutils: Helper Stata programs for SOEP data wrangling 
+SOEPutils: Helper Stata programs for wrangling SOEP data
 ========================================================
 
 The Stata programs included in this repository were developed to assist the
