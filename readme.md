@@ -30,6 +30,8 @@ net install SOEPutils, from("https://git.soep.de/mavila/soeputils/-/raw/main") r
 - is_there_a_new_version.ado
 - recode_missings.ado
 - rename_relabel.ado
+- sgen.ado
+- srep.ado
 - soep_check_harmonization.ado
 - soep_checks.ado
 - soep_harmonize.ado
