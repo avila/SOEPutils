@@ -21,8 +21,9 @@ program define srep
 	tempvar varbefore
     qui gen `varbefore' = `varlist' `iftouse'
     replace  `varlist'=`exp' `iftouse'
-    if !mi("`verbose'") {
-        qui levelsof `varbefore' if `varbefore'!=`varlist' & `touse', local(levels0)
+    if !mi("`verbose'") | mi("`verbose'") {
+        /* working on this part */
+        qui levelsof `varbefore' if `varbefore'!=`varlist' & `touse', local(levels0) missing
         di "'`varlist'' prev.: " as res "`levels0'"
     }
 
@@ -39,13 +40,14 @@ program define srep
 end
 
 if 0 {
+    clear
     set obs 10
     cap drop plb00220_h 
-    sgen plb00220_h = _n 
+    sgen plb00220_h = .z
     srep plb00220_h = _n^2 if inrange(_n, 3, 6), verbose note(xi)
     srep plb00220_h = 2 if _n == 2, verbose
     srep plb00220_h = 3 if _n == 3, verbose
-    fre _d_x
+    fre _d_plb00220_h
     char list plb00220_h[]    
 }
 
