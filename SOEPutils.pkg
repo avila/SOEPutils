@@ -14,9 +14,9 @@ f stata/rename_relabel.ado
 f stata/sgen.ado
 f stata/srep.ado
 f stata/soep_check_harmonization.ado
-f stata/soep_check_harmonization.ado
 f stata/soep_checks.ado
 f stata/soep_harmonize.ado
 f stata/tag.ado
+f stata/track.ado
 f stata/valid_years.ado
 
