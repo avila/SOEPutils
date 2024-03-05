@@ -5,17 +5,38 @@ capture program drop tag
 program define tag
     version 17
 
-    syntax varlist(min=1) if, [NOlist] /// does not list variables, only tags id variable
-        [format(str)] /// format of non-string variables
-        [strformat(str)] /// format of string variables
-        [Header(integer 40)] /// header option of list (number of rows for repeating variable name)
-        [listopts(string asis)] /// further options to be passed to list
-        [SUMMarize] // write a summary of tagged 'co-variables'
+    syntax [varlist(min=0 default=none)] if, ///
+        [NOLIst]                 /// does not list variables, only tags id variable
+        [format(str)]            /// format of non-string variables
+        [strformat(str)]         /// format of string variables
+        [Header(integer 40)]     /// header option of list (number of rows for repeating variable name)
+        [listopts(string asis)]  /// further options to be passed to list
+        [NOSUmmarize]             // write a summary of other variables in varlist
 
 
-    gettoken id_var covars : varlist
-
-
+    if "`varlist'"=="" {
+        cap xtset
+        if _rc == 459 {
+            di as error "either pass a ID variable or set dataset to panel with -xtset-"
+            exit 459
+        }
+        local id_var `r(panelvar)'
+    }
+    else {
+        gettoken id_var covars : varlist
+        
+    }
+    local numvars = wordcount("`varlist'")    
+    
+    if 0 {
+        /* debug */
+        di "id_var: `id_var'"
+        di "covars: `covars'"
+        di "varlist: `varlist'"
+        di "numvars: `numvars'"
+    }    
+    
+    
     *** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     **# tags
     *** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -29,19 +50,12 @@ program define tag
     cap drop __m 
     qui gen __m = __i * "<--"
 
-    qui count if __i==1
-    di as text "[var: __i]" _colum(20) "nr of of ids:" _colum(45) as res "`r(N)'"
-
-    qui count if _ck_all==1 
-    di as text "[var: _ck_all]" _colum(20) "nr of of ids * years:" _colum(45) as res "`r(N)'"
-
-    di as text _newline "variables created or overwritten: '_ck_all', '__i' and '__m'"
 
     *** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     **# lists
     *** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
-    if "`nolist'"=="" {
+    if "`nolist'"=="" & `numvars'>1 {
         /* shorten format to be able to display more variables */
         if `"`format'"'=="" local format "%12.0g"
         if `"`strformat'"'=="" local strformat "%12s"
@@ -50,44 +64,60 @@ program define tag
         ds `varlist' , has(type string)
         if "`r(varlist)'" != "" format `r(varlist)' `strformat'
 
-        list `id_var' `varlist' __m if _ck_all==1, linesize(255) header(`header') noobs sepby(`id_var') `listopts'
-
+        list `id_var' `covars' __m if _ck_all==1, linesize(255) header(`header') noobs comp ab(9) sepby(`id_var') `listopts'
+        di as text "Note: This command overwrites the format of the variables in varlist for better display"
     }
     
     *** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     **# summarizes
     *** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     
-    if "`summarize'"!="" {
+    if "`nosummarize'"=="" {
+
+        qui count if _ck_all==1 
+        local n_all = r(N)
+
+        // di 30 * "~ " _newline "Summarizing targeted variables" _newline 30 * "~ "
         qui levelsof `id_var' if __i==1
-        di _newline as text "`id_var':" _colum(20) as res "`r(N)' " as text "tagged obs. " as res "`r(r)' " as text "uniquely" 
+        di _newline as text "`id_var':" _colum(20) as res "`r(N)' " as text "tagged obs (" as res "`r(r)' " as text "uniquely, " as res "`n_all'" as text " total [pid#year]" ")" 
 
         foreach var in `covars' {
-            qui levelsof `var' if __i==1, local(levels) 
+            qui levelsof `var' if __i==1, local(levels)  missing
             local n_cat = r(r)
-            qui fre `var' if __i==1
-            cap mata : st_numscalar("colsum", colsum(st_matrix("r(valid)")))
+            
+
+            tempname matrvalid
+            if `n_cat' <= 50 cap qui fre `var' if __i==1
+            if `n_cat' <= 50 cap qui tab `var' if __i==1, missing matcell(`matrvalid')
+
+            cap mata : st_numscalar("colsum", colsum(st_matrix("`matrvalid'")))
             if _rc == 3204 scalar colsum = 0 
 
-            di as text _newline 120 * "~"
-            di as text "var: `var':" as res "%" as text " [total: " as res "`=colsum'" as text "]"
+
             if `n_cat' < 50 {
+
+                di as text _newline 60 * "~" " " _continue
+                di as text "`var':" as res "%" as text _colum(90) " [total valid: " as res "`=colsum'" as text "]"
 
                 local r = 1 
                 foreach lev in `levels' {
 
-                    di as text "`lev':" as res %-5.1f (r(valid)[`r',1]/colsum)*100 as text " " _continue 
+                    di as text "`lev':" as res %-5.1f (`matrvalid'[`r',1]/colsum)*100 as text " " _continue 
                     if mod(`r', 20) == 0 di as res _newline _continue
 
                     local r = `r' + 1  
                 }
             }
             else {
-                di as text as res "`n_cat' " as text "categories, skipping detailed percentages..." _continue
+                di as text _newline 60 * "~" " " _continue
+                di as text "`var':" as res "%" as text _colum(90) " [total valid: " as res "skipping..." as text "]"
+                di as text as res "`n_cat' " as text "categories. Skipping detailed percentages..." _continue
             }
-            
-            
+
         }
+    di as text _newline _newline "(Legend: categ.:" as res "pct" as text ")"
+    di as text  "(variables created or overwritten: '_ck_all', '__i' and '__m')" 
+    `disclaim'
     }
 
 end
