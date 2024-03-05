@@ -16,9 +16,11 @@ Installation
 
 You can check it and install this package using Stata's `net` command. 
 
+net install SOEPutils,
+
 ```stata
-net describe SOEPutils, from("https://git.soep.de/mavila/soeputils/-/raw/main")
-net install SOEPutils, from("https://git.soep.de/mavila/soeputils/-/raw/main") replace
+net describe SOEPutils, from("https://raw.githubusercontent.com/avila/SOEPutils/main") 
+net install  SOEPutils, from("https://raw.githubusercontent.com/avila/SOEPutils/main") replace
 ```
 
 
