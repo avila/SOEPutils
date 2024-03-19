@@ -161,7 +161,3 @@ program define _track_replace
     char `varlist'[_`=_trk_counter_`varlist''] "`varlist' = `exp'`if' `char_note'"
     
 end
-
-
-track: replace x = mod(_n,444)*1.3123
-track : replace x = 1123
