@@ -1,3 +1,8 @@
+*! v0.4 track // mavila@diw.de
+*! date: 19.03.2024
+*! update (v0.4): max number of categores to be printed (500)
+*! update (v0.4): change format (due to bad format of some decimal numbers)
+
 
 /* 
 TODO: 
@@ -83,7 +88,7 @@ if 0 {
 **# _track_generate
 *** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-*! v0.3 _track_generate // mavila@diw.de
+*! v0.4 _track_generate // mavila@diw.de
 capture program drop _track_generate
 program define _track_generate
     syntax newvarname =/exp [if] [in] 
@@ -102,7 +107,7 @@ end
 **# _track_replace
 *** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-*! v0.3 _track_replace // mavila@diw.de
+*! v0.4 _track_replace // mavila@diw.de
 capture program drop _track_replace
 program define _track_replace
     syntax varname =/exp [if], [note(string)] [verbose]
@@ -128,7 +133,20 @@ program define _track_replace
     if !mi("`verbose'") | mi("`verbose'") {
         /* working on this part */
         qui levelsof `varbefore' if `varbefore'!=`varlist' & `touse', local(levels0) missing
-        if !mi("`levels0'")  di as text "'`varlist'': " as res "`levels0'" as text " -> " as res "`exp'" as text " [total changes: " as res "`r(N)'" as text "]"
+
+        if !mi("`levels0'") {
+            if wordcount("`levels0'")<=500 {
+                foreach lev in `levels0' {
+                    /* change format of levels*/
+                    local levels_display : di "`levels_display'" %7.3g `lev'
+                }
+                di as text "'`varlist'': " as res "`levels_display'" as text " -> " as res "`exp'" as text " [total changes: " as res "`r(N)'" as text "]"    
+            }
+            else {
+                qui sum `varbefore' if `varbefore'!=`varlist' & `touse'
+                di as text "'`varlist'': " as res "Several categories (ranging from " %7.3g `r(min)' " to " %7.3g `r(max)' ")" as text " -> " as res "`exp'" as text " [total changes: " as res "`r(N)'" as text "]"    
+            }
+        }
         else di as text "("  as res "0"  as text " real changes made, won't affect tracking variable)"
     }
 
@@ -143,3 +161,7 @@ program define _track_replace
     char `varlist'[_`=_trk_counter_`varlist''] "`varlist' = `exp'`if' `char_note'"
     
 end
+
+
+track: replace x = mod(_n,444)*1.3123
+track : replace x = 1123
