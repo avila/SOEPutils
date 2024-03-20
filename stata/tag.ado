@@ -44,8 +44,8 @@ program define tag
     cap drop __i 
     qui gen __i = 1 `if'
 
-    cap drop _ck_all 
-    qui egen _ck_all = max(__i==1), by(`id_var')
+    cap drop __all 
+    qui egen __all = max(__i==1), by(`id_var')
 
     cap drop __m 
     qui gen __m = __i * "<--"
@@ -64,7 +64,7 @@ program define tag
         ds `varlist' , has(type string)
         if "`r(varlist)'" != "" format `r(varlist)' `strformat'
 
-        list `id_var' `covars' __m if _ck_all==1, linesize(255) header(`header') noobs comp ab(9) sepby(`id_var') `listopts'
+        list `id_var' `covars' __m if __all==1, linesize(255) header(`header') noobs comp ab(9) sepby(`id_var') `listopts'
         di as text "Note: This command overwrites the format of the variables in varlist for better display"
     }
     
@@ -74,7 +74,7 @@ program define tag
     
     if "`nosummarize'"=="" {
 
-        qui count if _ck_all==1 
+        qui count if __all==1 
         local n_all = r(N)
 
         // di 30 * "~ " _newline "Summarizing targeted variables" _newline 30 * "~ "
@@ -116,7 +116,7 @@ program define tag
 
         }
     di as text _newline _newline "(Legend: categ.:" as res "pct" as text ")"
-    di as text  "(variables created or overwritten: '_ck_all', '__i' and '__m')" 
+    di as text  "(variables created or overwritten: '__all', '__i' and '__m')" 
     `disclaim'
     }
 
