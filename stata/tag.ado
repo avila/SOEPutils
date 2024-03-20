@@ -1,3 +1,5 @@
+*! v0.2 Marcelo Avila (mavila@diw.de/mrainhoavila@gmail.com) 20mar2024
+
 *** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 **# tag
 *** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -101,8 +103,10 @@ program define tag
 
                 local r = 1 
                 foreach lev in `levels' {
+                    local pcti = floor((`matrvalid'[`r',1]/colsum)*100/25)
+                    
+                    di as text "`lev':" as res %-5.1f (`matrvalid'[`r',1]/colsum)*100 `pcti' * "*" as text " " _continue 
 
-                    di as text "`lev':" as res %-5.1f (`matrvalid'[`r',1]/colsum)*100 as text " " _continue 
                     if mod(`r', 20) == 0 di as res _newline _continue
 
                     local r = `r' + 1  
@@ -115,9 +119,8 @@ program define tag
             }
 
         }
-    di as text _newline _newline "(Legend: categ.:" as res "pct" as text ")"
+    if `numvars'>1 di as text _newline _newline "(key: category:" as res "pct" as text "; " as res  "*" as text ">.25, "  as res "**" as text ">.50, "   as res"***" as text ">.75)"
     di as text  "(variables created or overwritten: '__all', '__i' and '__m')" 
-    `disclaim'
     }
 
 end
