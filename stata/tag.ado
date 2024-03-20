@@ -1,4 +1,7 @@
-*! v0.2 Marcelo Avila (mavila@diw.de/mrainhoavila@gmail.com) 20mar2024
+*! v0.3 Marcelo Avila (mavila@diw.de/mrainhoavila@gmail.com) 20mar2024
+*! upd v.03: if -> if/ (so all __i are defined either 0 or 1)
+*! upd v.02: include * for high proportion of categories
+
 
 *** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 **# tag
@@ -7,7 +10,7 @@ capture program drop tag
 program define tag
     version 17
 
-    syntax [varlist(min=0 default=none)] if, ///
+    syntax [varlist(min=0 default=none)] if/, ///
         [NOLIst]                 /// does not list variables, only tags id variable
         [format(str)]            /// format of non-string variables
         [strformat(str)]         /// format of string variables
@@ -44,7 +47,7 @@ program define tag
     *** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     cap drop __i 
-    qui gen __i = 1 `if'
+    qui gen __i = (`if') /* generates 0/1 (no missing) */
 
     cap drop __all 
     qui egen __all = max(__i==1), by(`id_var')
@@ -66,7 +69,7 @@ program define tag
         ds `varlist' , has(type string)
         if "`r(varlist)'" != "" format `r(varlist)' `strformat'
 
-        list `id_var' `covars' __m if __all==1, linesize(255) header(`header') noobs comp ab(9) sepby(`id_var') `listopts'
+        list `id_var' `covars' __m if __all==1, linesize(255) header(`header') noobs comp sepby(`id_var') `listopts'
         di as text "Note: This command overwrites the format of the variables in varlist for better display"
     }
     

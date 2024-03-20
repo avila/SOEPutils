@@ -1,7 +1,8 @@
-*! v0.4 track // mavila@diw.de
+*! v0.5 track // mavila@diw.de
 *! date: 19.03.2024
+*! update (v0.5): fix typlist when passed data type as in 'track: gen (type) varname'
 *! update (v0.4): max number of categores to be printed (500)
-*! update (v0.4): change format (due to bad format of some decimal numbers)
+*! update (v0.3): change format (due to bad format of some decimal numbers)
 
 
 /* 
@@ -52,8 +53,6 @@ program define track, properties(prefix)
     if regexm("`call_subcomm'", "gen") {
         /* generate */
         _track_generate `subcmd_rest'
-        di as text "Tracking `track_varname' in new variable __`track_varname'"
-
     }
     if regexm("`call_subcomm'", "replace") {
         /* replace */
@@ -93,7 +92,7 @@ capture program drop _track_generate
 program define _track_generate
     syntax newvarname =/exp [if] [in] 
     /* local typlist is generated automatically when syntax newvarname is used */
-    
+    di as text "Tracking changes in `varlist' with '__`varlist''"
     gen `typlist' `varlist'=`exp' 
 
     cap drop __`varlist'
