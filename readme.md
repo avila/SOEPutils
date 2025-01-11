@@ -41,5 +41,5 @@ net install  SOEPutils, from("https://raw.githubusercontent.com/avila/SOEPutils/
 - track.ado (testing)
 - valid_years.ado
 
-Author:  Marcelo Avila (Student Assistent at DIW Berlin)
+Author:  Marcelo Avila
 ```
